@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NEON UI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== SPLASH SCREEN ===== */
+  #splash {
+    position: fixed; inset: 0;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .splash-video {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    position: absolute; inset: 0;
+  }
+
+  #skip-btn {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: #e040fb;
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 0 20px #e040fb, 0 0 40px #e040fb88;
+    animation: pulse-pink 1.5s infinite;
+  }
+
+  @keyframes pulse-pink {
+    0%, 100% { box-shadow: 0 0 20px #e040fb, 0 0 40px #e040fb88; }
+    50% { box-shadow: 0 0 30px #e040fb, 0 0 60px #e040fb; }
+  }
+
+  /* ===== LOGIN SCREEN ===== */
+  #login {
+    display: none;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at top, #2a0050 0%, #0a0010 60%);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .login-card {
+    background: linear-gradient(145deg, #1a0035, #0d0020);
+    border: 2px solid #7c3aed;
+    border-radius: 20px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow:
+      0 0 30px #7c3aed66,
+      0 0 60px #7c3aed33,
+      inset 0 0 30px #7c3aed11;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login-card::before {
+    content: '';
+    position: absolute;
+    top: -2px; left: 10%; right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #e040fb, transparent);
+    box-shadow: 0 0 20px #e040fb;
+  }
+
+  .login-card::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 10%; right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #7c3aed, transparent);
+    box-shadow: 0 0 20px #7c3aed;
+  }
+
+  .login-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    text-align: center;
+    color: #e040fb;
+    text-shadow: 0 0 20px #e040fb, 0 0 40px #e040fb88;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+  }
+
+  .login-subtitle {
+    text-align: center;
+    color: #aaa;
+    font-size: 13px;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+  }
+
+  .login-input {
+    width: 100%;
+    background: #1e0040;
+    border: 1.5px solid #7c3aed;
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    margin-bottom: 16px;
+    outline: none;
+    transition: all 0.3s;
+  }
+
+  .login-input:focus {
+    border-color: #e040fb;
+    box-shadow: 0 0 15px #e040fb44;
+  }
+
+  .login-input::placeholder { color: #666; }
+
+  .login-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #e040fb, #7c3aed);
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px #e040fb55;
+  }
+
+  .login-btn:hover {
+    box-shadow: 0 0 30px #e040fb99;
+    transform: translateY(-1px);
+  }
+
+  .login-btn:active { transform: translateY(0); }
+
+  /* ===== POST-LOGIN VIDEO ===== */
+  #post-login-video {
+    display: none;
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 998;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .post-video {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  #skip-postlogin {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: #e040fb;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 0 20px #e040fb;
+  }
+
+  /* ===== DASHBOARD ===== */
+  #dashboard {
+    display: none;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #1a0035 0%, #0a0015 100%);
+    padding-bottom: 80px;
+  }
+
+  .dash-header {
+    background: linear-gradient(90deg, #2a0055, #1a0035);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #7c3aed55;
+  }
+
+  .dash-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    color: #e040fb;
+    text-shadow: 0 0 10px #e040fb;
+    letter-spacing: 2px;
+  }
+
+  .dash-header-icons {
+    display: flex; gap: 12px; font-size: 20px;
+  }
+
+  .profile-card {
+    margin: 16px;
+    background: linear-gradient(135deg, #1e0040, #0d0020);
+    border: 1.5px solid #7c3aed;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 0 20px #7c3aed33;
+  }
+
+  .avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 2px solid #e040fb;
+    box-shadow: 0 0 15px #e040fb88;
+    object-fit: cover;
+    background: linear-gradient(135deg, #7c3aed, #e040fb);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; flex-shrink: 0;
+  }
+
+  .profile-info h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .profile-info p {
+    font-size: 13px;
+    color: #e040fb;
+    margin-top: 4px;
+  }
+
+  /* Banner video */
+  .banner-video-wrap {
+    margin: 0 16px 16px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1.5px solid #7c3aed55;
+    box-shadow: 0 0 20px #7c3aed33;
+    height: 180px;
+    background: #0a0015;
+  }
+
+  .banner-video-wrap video {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  /* Action buttons */
+  .action-row {
+    display: flex; gap: 12px;
+    margin: 0 16px 20px;
+  }
+
+  .action-btn {
+    flex: 1;
+    background: transparent;
+    border: 1.5px solid #e040fb;
+    border-radius: 30px;
+    padding: 12px 8px;
+    color: #e040fb;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: all 0.3s;
+    box-shadow: 0 0 10px #e040fb33;
+  }
+
+  .action-btn:hover {
+    background: #e040fb22;
+    box-shadow: 0 0 20px #e040fb66;
+  }
+
+  /* Form section */
+  .section-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    color: #fff;
+    letter-spacing: 2px;
+    margin: 0 16px 10px;
+  }
+
+  .target-input {
+    width: calc(100% - 32px);
+    margin: 0 16px 20px;
+    background: #1e0040;
+    border: 1.5px solid #7c3aed;
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: #555;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    outline: none;
+    display: block;
+  }
+
+  .select-bug {
+    width: calc(100% - 32px);
+    margin: 0 16px 20px;
+    background: #1e0040;
+    border: 1.5px solid #7c3aed;
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    outline: none;
+    display: block;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  .send-btn {
+    width: calc(100% - 32px);
+    margin: 0 16px;
+    background: linear-gradient(135deg, #e040fb, #7c3aed);
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    box-shadow: 0 0 20px #e040fb55;
+    display: block;
+  }
+
+  /* Modal simulasi */
+  #sim-modal {
+    display: none;
+    position: fixed; inset: 0;
+    background: #000a;
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .sim-box {
+    background: linear-gradient(145deg, #1a0035, #0d0020);
+    border: 2px solid #e040fb;
+    border-radius: 20px;
+    padding: 30px 24px;
+    width: 100%;
+    max-width: 340px;
+    text-align: center;
+    box-shadow: 0 0 40px #e040fb55;
+  }
+
+  .sim-box h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #e040fb;
+    font-size: 16px;
+    margin-bottom: 12px;
+    text-shadow: 0 0 10px #e040fb;
+  }
+
+  .sim-progress {
+    background: #2a0050;
+    border-radius: 10px;
+    height: 10px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+
+  .sim-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #7c3aed, #e040fb);
+    width: 0%;
+    transition: width 0.1s;
+    box-shadow: 0 0 10px #e040fb;
+  }
+
+  .sim-status {
+    color: #aaa;
+    font-size: 14px;
+    min-height: 20px;
+    margin-bottom: 16px;
+  }
+
+  .sim-close {
+    background: #e040fb;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 28px;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    display: none;
+  }
+
+  /* Bottom nav */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(180deg, #1a0035, #0a0020);
+    border-top: 1px solid #7c3aed55;
+    display: flex;
+    z-index: 100;
+  }
+
+  .nav-item {
+    flex: 1; padding: 12px 8px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    color: #7c3aed;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+  }
+
+  .nav-item.active { color: #e040fb; }
+  .nav-item span:first-child { font-size: 20px; }
+
+  /* Error shake */
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-8px)}
+    75%{transform:translateX(8px)}
+  }
+  .shake { animation: shake 0.4s; }
+</style>
+</head>
+<body>
+
+<!-- ===== SPLASH ===== -->
+<div id="splash">
+  <video class="splash-video" id="splash-vid" autoplay muted playsinline>
+    <source src="ssstik.io_@huylor.edit_1782532576514.mp4" type="video/mp4">
+  </video>
+  <button id="skip-btn" onclick="goLogin()">SKIP</button>
+</div>
+
+<!-- ===== LOGIN ===== -->
+<div id="login" style="display:none; min-height:100vh; background:radial-gradient(ellipse at top, #2a0050 0%, #0a0010 60%); align-items:center; justify-content:center; padding:20px; flex-direction:column;">
+  <div class="login-card">
+    <div class="login-title">NEON-X</div>
+    <div class="login-subtitle">Secure Access System</div>
+    <input class="login-input" id="uname" type="text" placeholder="Username" value="admin">
+    <input class="login-input" id="upass" type="password" placeholder="Password">
+    <button class="login-btn" onclick="doLogin()">LOGIN</button>
+    <p id="login-err" style="color:#ff4444;text-align:center;margin-top:12px;font-size:13px;display:none;">Username atau password salah!</p>
+  </div>
+</div>
+
+<!-- ===== POST-LOGIN VIDEO ===== -->
+<div id="post-login-video" style="display:none; position:fixed; inset:0; background:#000; z-index:998; align-items:center; justify-content:center;">
+  <video class="post-video" id="post-vid" autoplay muted playsinline>
+    <source src="ssstik.io_@kayaki80_1782532534142.mp4" type="video/mp4">
+  </video>
+  <button id="skip-postlogin" onclick="goDashboard()">SKIP</button>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="dashboard">
+  <div class="dash-header">
+    <h2>Welcome, klonetzy</h2>
+    <div class="dash-header-icons">
+      <span>🎧</span>
+      <span>👤</span>
+    </div>
+  </div>
+
+  <div class="profile-card">
+    <div class="avatar">🧊</div>
+    <div class="profile-info">
+      <h3>klonetzy</h3>
+      <p>Role: MEMBER &nbsp;·&nbsp; Exp: 2026-06-08</p>
+    </div>
+  </div>
+
+  <!-- Banner video gantiin gambar Sasuke -->
+  <div class="banner-video-wrap">
+    <video autoplay loop muted playsinline>
+      <source src="ssstik.io_@huylor.edit_1782532576514.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <div class="action-row">
+    <button class="action-btn" onclick="openSim('nomor')">📱 BUG NOMOR</button>
+    <button class="action-btn" onclick="openSim('group')">👥 BUG GROUP</button>
+  </div>
+
+  <div class="section-label">NOMOR TARGET</div>
+  <input class="target-input" id="target-num" type="tel" placeholder="+62xxxxxxxxxxx">
+
+  <div class="section-label" style="margin-top:0">PILIH BUG</div>
+  <select class="select-bug" id="bug-type">
+    <option value="">-- Pilih Tipe Bug --</option>
+    <option>Bug Crash Otomatis</option>
+    <option>Bug Loop Restart</option>
+    <option>Bug Notif Spam</option>
+    <option>Bug Force Close</option>
+    <option>Bug Memory Dump</option>
+  </select>
+
+  <button class="send-btn" onclick="openSim('send')">⚡ KIRIM BUG</button>
+
+  <div class="bottom-nav">
+    <div class="nav-item active"><span>🏠</span><span>Home</span></div>
+    <div class="nav-item"><span>💬</span><span>Chat</span></div>
+    <div class="nav-item"><span>🔔</span><span>Info</span></div>
+    <div class="nav-item"><span>⚙️</span><span>Tools</span></div>
+  </div>
+</div>
+
+<!-- ===== SIMULASI MODAL ===== -->
+<div id="sim-modal" style="display:none; position:fixed; inset:0; background:#000a; z-index:500; align-items:center; justify-content:center; padding:20px;">
+  <div class="sim-box">
+    <h3 id="sim-title">MENGIRIM BUG...</h3>
+    <p id="sim-target-display" style="color:#aaa;font-size:13px;margin-bottom:8px;"></p>
+    <div class="sim-progress"><div class="sim-bar" id="sim-bar"></div></div>
+    <div class="sim-status" id="sim-status">Initializing...</div>
+    <button class="sim-close" id="sim-close-btn" onclick="closeSim()">SELESAI</button>
+  </div>
+</div>
+
+<script>
+  // Auto skip splash after video ends or 8s
+  const splashVid = document.getElementById('splash-vid');
+  splashVid.addEventListener('ended', goLogin);
+  setTimeout(goLogin, 8000);
+
+  function goLogin() {
+    document.getElementById('splash').style.display = 'none';
+    const loginEl = document.getElementById('login');
+    loginEl.style.display = 'flex';
+  }
+
+  function doLogin() {
+    const u = document.getElementById('uname').value.trim();
+    const p = document.getElementById('upass').value.trim();
+    const err = document.getElementById('login-err');
+
+    if (!u || !p) {
+      err.style.display = 'block';
+      err.textContent = 'Isi username dan password dulu!';
+      document.querySelector('.login-card').classList.add('shake');
+      setTimeout(() => document.querySelector('.login-card').classList.remove('shake'), 500);
+      return;
+    }
+
+    // Simulasi login berhasil
+    document.getElementById('login').style.display = 'none';
+    const postVid = document.getElementById('post-login-video');
+    postVid.style.display = 'flex';
+    const vid = document.getElementById('post-vid');
+    vid.play();
+    vid.addEventListener('ended', goDashboard);
+    setTimeout(goDashboard, 10000);
+  }
+
+  function goDashboard() {
+    document.getElementById('post-login-video').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  }
+
+  const simSteps = [
+    [10, 'Connecting to server...'],
+    [25, 'Authenticating session...'],
+    [40, 'Injecting payload...'],
+    [60, 'Bypassing firewall...'],
+    [75, 'Sending packets...'],
+    [88, 'Executing command...'],
+    [100, '✅ Bug berhasil dikirim!']
+  ];
+
+  function openSim(type) {
+    const target = document.getElementById('target-num').value.trim();
+    const bugType = document.getElementById('bug-type').value;
+
+    if (type === 'send' && !target) {
+      alert('Masukkan nomor target dulu!');
+      return;
+    }
+
+    const titles = {
+      nomor: 'BUG NOMOR',
+      group: 'BUG GROUP',
+      send: 'MENGIRIM BUG'
+    };
+
+    document.getElementById('sim-title').textContent = titles[type] + '...';
+    document.getElementById('sim-target-display').textContent = target ? 'Target: ' + target : '';
+    document.getElementById('sim-bar').style.width = '0%';
+    document.getElementById('sim-status').textContent = 'Initializing...';
+    document.getElementById('sim-close-btn').style.display = 'none';
+    document.getElementById('sim-modal').style.display = 'flex';
+
+    let i = 0;
+    function nextStep() {
+      if (i >= simSteps.length) {
+        document.getElementById('sim-close-btn').style.display = 'inline-block';
+        return;
+      }
+      const [pct, msg] = simSteps[i++];
+      document.getElementById('sim-bar').style.width = pct + '%';
+      document.getElementById('sim-status').textContent = msg;
+      setTimeout(nextStep, 600 + Math.random() * 400);
+    }
+    setTimeout(nextStep, 300);
+  }
+
+  function closeSim() {
+    document.getElementById('sim-modal').style.display = 'none';
+  }
+</script>
+</body>
+</html>
